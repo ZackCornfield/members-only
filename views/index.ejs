@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusive Clubhouse</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Welcome to the Exclusive Clubhouse</h1>
+        
+        <% if (user) { %>
+            <div class="nav-links">
+                <a href="/auth/logout" class="btn">Logout</a>
+                <a href="/messages/new" class="btn">Create a New Message</a>
+                <% if (!user.membership_status) { %>
+                    <a href="/auth/join" class="btn">Join the Club</a>
+                <% } %>
+            </div>
+            <div class="welcome-message">
+                <p>Welcome, <%= user.username %>!</p>
+            </div>
+        <% } else { %>
+            <div class="nav-links">
+                <a href="/auth/login" class="btn">Login</a>
+                <a href="/auth/signup" class="btn">Sign Up</a>
+            </div>
+        <% } %>
+
+        <h2>Messages</h2>
+        <% if (messages && messages.length > 0) { %>
+            <ul class="messages-list">
+                <% messages.forEach((message, index) => { %>
+                    <li class="message-card">
+                        <h3 class="message-title"><%= message.title %></h3>
+                        <p class="message-content"><%= message.text %></p>
+                        <% if (user && user.membership_status) { %>
+                            <p class="message-meta">By: <%= message.first_name %> <%= message.last_name %> | Date: <%= message.timestamp %></p>
+                        <% } else { %>
+                            <p class="message-meta">By: Anonymous</p>
+                        <% } %>
+                        <% if (user && user.is_admin) { %>
+                            <form action="/messages/<%= message.id %>/delete" method="POST" class="delete-form">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        <% } %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No messages available.</p>
+        <% } %>
+    </div>
+</body>
+</html>
